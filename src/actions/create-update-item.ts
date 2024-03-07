@@ -3,12 +3,11 @@ import {CrudItemResponses} from '../infrastructure/interfaces/CrudItemResponse';
 
 export const CreateUpdateItem = async (
   item: Partial<CrudItemResponses>,
-): Promise<CrudItemResponses> => {
-  console.log('if');
+): Promise<CrudItemResponses | boolean> => {
   if (item._id !== undefined && item._id !== 'new') {
-    updateItem(item);
+    return await updateItem(item);
   } else {
-    return createItem(item);
+    return await createItem(item);
   }
 
   throw new Error('Cant update/create this item, check ID');
@@ -32,4 +31,22 @@ const createItem = async (item: Partial<CrudItemResponses>) => {
   }
 };
 
-const updateItem = (item: Partial<CrudItemResponses>) => {};
+const updateItem = async (
+  item: Partial<CrudItemResponses>,
+): Promise<boolean> => {
+  try {
+    const {_id, ...rest} = item; // ...rest representa las demas propiedades, las que se necesitan para crear un nuevo item
+    const {status} = await crudApi.put<CrudItemResponses>(`/unicorns/${_id}`, {
+      ...rest,
+    });
+
+    return status === 200;
+  } catch (error: any) {
+    console.log(error);
+    console.log(error.response.data);
+    console.log(error.response.status);
+    console.log(error.response.headers);
+
+    throw new Error('Error al crear item');
+  }
+};

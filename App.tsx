@@ -9,6 +9,7 @@ import {useColorScheme} from 'react-native';
 
 import themeCustom from './src/config/theme/UiKittenCustomTheme/custom-theme.json';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {ModalVisibleContextProvider} from './src/presentation/context/ModalVisibleContext';
 
 const App = () => {
   // TanStack
@@ -41,7 +42,9 @@ const App = () => {
               notification: CustomTheme['color-primary-500'],
             },
           }}>
-          <StackNavigator />
+          <ModalVisibleContextProvider>
+            <StackNavigator />
+          </ModalVisibleContextProvider>
         </NavigationContainer>
       </ApplicationProvider>
     </QueryClientProvider>
